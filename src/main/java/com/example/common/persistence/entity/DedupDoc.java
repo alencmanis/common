@@ -1,4 +1,4 @@
-package com.example.persistence.entity;
+package com.example.common.persistence.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;

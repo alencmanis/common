@@ -10,7 +10,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.alencmanis</groupId>
+    <groupId>com.example</groupId>
     <artifactId>common</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
@@ -22,12 +22,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
 
 
         <dependency>

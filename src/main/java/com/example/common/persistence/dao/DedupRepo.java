@@ -1,6 +1,6 @@
-package com.example.persistence.dao;
+package com.example.common.persistence.dao;
 
-import com.example.persistence.entity.DedupDoc;
+import com.example.common.persistence.entity.DedupDoc;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Mono;
 

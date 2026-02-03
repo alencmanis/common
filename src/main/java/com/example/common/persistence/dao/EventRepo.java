@@ -1,6 +1,6 @@
-package com.example.persistence.dao;
+package com.example.common.persistence.dao;
 
-import com.example.persistence.entity.EventDoc;
+import com.example.common.persistence.entity.EventDoc;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 public interface EventRepo extends ReactiveMongoRepository<EventDoc, String> {
