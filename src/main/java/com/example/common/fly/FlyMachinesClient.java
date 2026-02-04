@@ -65,6 +65,11 @@ public class FlyMachinesClient {
         return actionPostVoid("/v1/apps/{app}/machines/{id}/restart", machineId);
     }
 
+    public Mono<Void> suspendMachine(String machineId) {
+        return this.actionPostVoid("/v1/apps/{app}/machines/{id}/suspend", machineId);
+    }
+
+
     public Mono<Void> destroyMachine(String machineId) {
         return wc.delete()
                 .uri("/v1/apps/{app}/machines/{id}", System.getenv("FLY_APP_NAME"), machineId)
