@@ -116,16 +116,16 @@ public abstract class Autoscale {
                                         return Mono.empty();
                                     }
 
-                                    long now = System.currentTimeMillis();
-                                    long last = lastScaleEpochMillis.get();
-                                    long cooldownMs = Duration.ofSeconds(props.cooldownSeconds()).toMillis();
-                                    long elapsed = now - last;
+//                                    long now = System.currentTimeMillis();
+//                                    long last = lastScaleEpochMillis.get();
+//                                    long cooldownMs = Duration.ofSeconds(props.cooldownSeconds()).toMillis();
+//                                    long elapsed = now - last;
 
-                                    if (elapsed < cooldownMs) {
-                                        log.warn("autoscale: backlog={} > minBacklog, but cooldown active ({}ms left)",
-                                                newCount, (cooldownMs - elapsed));
-                                        return Mono.empty();
-                                    }
+//                                    if (elapsed < cooldownMs) {
+//                                        log.warn("autoscale: backlog={} > minBacklog, but cooldown active ({}ms left)",
+//                                                newCount, (cooldownMs - elapsed));
+//                                        return Mono.empty();
+//                                    }
 
                                     return machines.listManaged()
                                             .filter(m -> "started".equals(m.state()))
