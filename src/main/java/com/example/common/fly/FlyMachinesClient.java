@@ -1,8 +1,8 @@
 package com.example.common.fly;
 
-
-import com.example.common.fly.dto.CreateMachineRequest;
-import com.example.common.fly.dto.Machine;
+import com.example.fly.dto.CreateMachineRequest;
+import com.example.fly.dto.Machine;
+import com.example.mqprocessor.config.FlyProperties;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -16,18 +16,20 @@ import java.time.Duration;
 public class FlyMachinesClient {
 
     private final WebClient wc;
+    private final FlyProperties props;
 
-    public FlyMachinesClient(WebClient flyWebClient) {
+    public FlyMachinesClient(WebClient flyWebClient, FlyProperties props) {
         this.wc = flyWebClient;
+        this.props = props;
     }
 
     private Duration timeout() {
-        return Duration.ofMillis(15000);
+        return Duration.ofMillis(props.http().timeoutMs());
     }
 
     public Flux<Machine> listMachines() {
         return wc.get()
-                .uri("/v1/apps/{app}/machines", System.getenv("FLY_APP_NAME"))
+                .uri("/v1/apps/{app}/machines", props.appName())
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::toFlyError)
                 .bodyToFlux(Machine.class)
@@ -36,7 +38,7 @@ public class FlyMachinesClient {
 
     public Mono<Machine> getMachine(String machineId) {
         return wc.get()
-                .uri("/v1/apps/{app}/machines/{id}", System.getenv("FLY_APP_NAME"), machineId)
+                .uri("/v1/apps/{app}/machines/{id}", props.appName(), machineId)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::toFlyError)
                 .bodyToMono(Machine.class)
@@ -45,7 +47,7 @@ public class FlyMachinesClient {
 
     public Mono<Machine> createMachine(CreateMachineRequest req) {
         return wc.post()
-                .uri("/v1/apps/{app}/machines", System.getenv("FLY_APP_NAME"))
+                .uri("/v1/apps/{app}/machines", props.appName())
                 .bodyValue(req)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::toFlyError)
@@ -67,7 +69,7 @@ public class FlyMachinesClient {
 
     public Mono<Void> destroyMachine(String machineId) {
         return wc.delete()
-                .uri("/v1/apps/{app}/machines/{id}", System.getenv("FLY_APP_NAME"), machineId)
+                .uri("/v1/apps/{app}/machines/{id}", props.appName(), machineId)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::toFlyError)
                 .bodyToMono(Void.class)
@@ -76,7 +78,7 @@ public class FlyMachinesClient {
 
     private Mono<Void> actionPostVoid(String pathTemplate, String machineId) {
         return wc.post()
-                .uri(pathTemplate, System.getenv("FLY_APP_NAME"), machineId)
+                .uri(pathTemplate, props.appName(), machineId)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::toFlyError)
                 .bodyToMono(Void.class)
