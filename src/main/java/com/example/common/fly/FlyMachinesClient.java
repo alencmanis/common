@@ -86,6 +86,6 @@ public class FlyMachinesClient {
     private Mono<? extends Throwable> toFlyError(ClientResponse resp) {
         return resp.bodyToMono(String.class)
                 .defaultIfEmpty("")
-                .flatMap(body -> Mono.error(new FlyApiException(resp.statusCode().value(), body)));
+                .flatMap(body -> Mono.error(new com.example.common.persistence.fly.FlyApiException(resp.statusCode().value(), body)));
     }
 }
