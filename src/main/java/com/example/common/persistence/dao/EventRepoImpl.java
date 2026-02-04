@@ -1,15 +1,16 @@
 package com.example.common.persistence.dao;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Mono;
 
-@RequiredArgsConstructor
 public class EventRepoImpl implements EventRepoCustom {
-
     private final ReactiveMongoOperations mongo;
+
+    public EventRepoImpl(ReactiveMongoOperations mongo) {
+        this.mongo = mongo;
+    }
 
     @Override
     public Mono<Long> countNewWithoutProcessingAt() {
