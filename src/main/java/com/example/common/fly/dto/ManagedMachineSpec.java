@@ -1,4 +1,4 @@
-package com.example.common.persistence.fly.dto;
+package com.example.common.fly.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,5 +13,6 @@ public record ManagedMachineSpec(
         Map<String, Object> metadata,
         Guest guest
 ) {
-    public record Guest(@NotNull Integer cpus, @NotNull Integer memoryMb) {}
+    public record Guest(@NotNull Integer cpus, @NotNull Integer memoryMb) {
+    }
 }

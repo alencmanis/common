@@ -1,4 +1,4 @@
-package com.example.common.persistence.fly;
+package com.example.common.fly;
 
 public class FlyApiException extends RuntimeException {
     private final int status;

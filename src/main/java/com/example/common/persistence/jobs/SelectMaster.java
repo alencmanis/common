@@ -1,9 +1,9 @@
 package com.example.common.persistence.jobs;
 
 
+import com.example.common.fly.FlyMachinesClient;
+import com.example.common.fly.dto.Machine;
 import com.example.common.persistence.entity.AppDoc;
-import com.example.common.persistence.fly.FlyMachinesClient;
-import com.example.common.persistence.fly.dto.Machine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;

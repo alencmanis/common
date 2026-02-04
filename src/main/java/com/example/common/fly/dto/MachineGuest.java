@@ -1,4 +1,4 @@
-package com.example.common.persistence.fly.dto;
+package com.example.common.fly.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

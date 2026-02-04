@@ -1,8 +1,8 @@
-package com.example.common.persistence.fly;
+package com.example.common.fly;
 
 
-import com.example.common.persistence.fly.dto.CreateMachineRequest;
-import com.example.common.persistence.fly.dto.Machine;
+import com.example.common.fly.dto.CreateMachineRequest;
+import com.example.common.fly.dto.Machine;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -86,6 +86,6 @@ public class FlyMachinesClient {
     private Mono<? extends Throwable> toFlyError(ClientResponse resp) {
         return resp.bodyToMono(String.class)
                 .defaultIfEmpty("")
-                .flatMap(body -> Mono.error(new com.example.common.persistence.fly.FlyApiException(resp.statusCode().value(), body)));
+                .flatMap(body -> Mono.error(new FlyApiException(resp.statusCode().value(), body)));
     }
 }
