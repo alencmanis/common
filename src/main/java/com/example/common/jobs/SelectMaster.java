@@ -37,9 +37,7 @@ public class SelectMaster {
         this.client = client;
     }
 
-//    @Scheduled(fixedDelayString = "${fly.master.job-delay-ms:300000}")
     public void run() {
-        log.info("log");
         if (!running.compareAndSet(false, true)) {
             return;
         }
