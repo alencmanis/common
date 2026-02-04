@@ -1,4 +1,4 @@
-package com.example.common.persistence.jobs;
+package com.example.common.jobs;
 
 
 import com.example.common.fly.FlyMachinesClient;
