@@ -1,7 +1,7 @@
 package com.example.common.fly;
 
-import com.example.fly.dto.CreateMachineRequest;
-import com.example.fly.dto.Machine;
+import com.example.common.fly.dto.CreateMachineRequest;
+import com.example.common.fly.dto.Machine;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

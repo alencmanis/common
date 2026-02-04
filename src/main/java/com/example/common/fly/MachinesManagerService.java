@@ -1,7 +1,7 @@
 package com.example.common.fly;
 
-import com.example.fly.dto.CreateMachineRequest;
-import com.example.fly.dto.Machine;
+import com.example.common.fly.dto.CreateMachineRequest;
+import com.example.common.fly.dto.Machine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class MachinesManagerService {
                 .collectList()
                 .flatMap(list -> {
                     long matches = list.stream()
-                            .filter(m -> Arrays.asList(statuses).contains(m.state() ))
+                            .filter(m -> Arrays.asList(statuses).contains(m.state()))
                             .count();
 
                     log.warn("start(status={}): total={} matches={}", Arrays.asList(statuses), list.size(), matches);
