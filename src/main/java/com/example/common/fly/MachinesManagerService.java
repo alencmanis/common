@@ -28,6 +28,10 @@ public class MachinesManagerService {
         return client.listMachines();
     }
 
+    public Mono<Void> suspendMachine(String machineId) {
+        return client.suspendMachine(machineId);
+    }
+
     public Mono<Void> start(String... statuses) {
         return client.listMachines()
                 .collectList()
