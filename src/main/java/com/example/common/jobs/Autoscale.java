@@ -149,7 +149,7 @@ public abstract class Autoscale {
                                         .take(need)
                                         // English comment: Start sequentially to avoid Machines API rate limits
                                         .concatMap(m -> machines.start("stopped", "suspended")
-                                                .delayElement(Duration.ofMillis(1000)))
+                                                .delayElement(Duration.ofMillis(10000)))
                                         .then();
                             })
                             // English comment: Update lastScale only if we actually executed the start pipeline
