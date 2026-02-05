@@ -104,43 +104,7 @@ public abstract class Autoscale {
                         }
 
                         // ---- 2) Scale-up logic: ONLY master may scale ----
-                        return appRepo.existsByMasterMachineId(selfId)
-                                .onErrorReturn(false)
-                                .flatMap(isMasterNow -> {
-                                    if (!Boolean.TRUE.equals(isMasterNow)) {
-                                        // Non-master does not scale.
-                                        return Mono.empty();
-                                    }
-
-                                    if (newCount <= props.minBacklogToScale()) {
-                                        return Mono.empty();
-                                    }
-                                    return machines.listManaged()
-                                            .filter(m -> "started".equals(m.state()))
-                                            .count()
-                                            .flatMap(current -> {
-                                                long target = Math.min(props.maxMachines(), current + props.scaleStep());
-                                                long need = Math.max(0L, target - current);
-
-                                                if (need == 0) {
-                                                    return Mono.empty();
-                                                }
-
-                                                log.warn("autoscale: backlog={} > minBacklog={} -> scale {} -> {} (need={})",
-                                                        newCount, props.minBacklogToScale(), current, target, need);
-
-                                                return machines.listManaged()
-                                                        .filter(m -> "stopped".equals(m.state()) || "suspended".equals(m.state()))
-                                                        .take(need)
-                                                        // English comment: Start sequentially to avoid Machines API rate limits
-                                                        .concatMap(m -> machines.start(m.id())
-                                                                .delayElement(Duration.ofMillis(250)))
-                                                        .then();
-                                            })
-                                            // English comment: Update lastScale only if we actually executed the start pipeline
-                                            .doOnSuccess(v -> lastScaleEpochMillis.set(System.currentTimeMillis()));
-
-                                });
+                        return start(selfId, newCount);
                     })
                     .onErrorResume(e -> {
                         log.error("autoscale: job failed {}", e.getMessage(), e);
@@ -153,5 +117,45 @@ public abstract class Autoscale {
             running.set(false);
             throw e;
         }
+    }
+
+    public Mono<Void> start(String selfId, long newCount) {
+        return appRepo.existsByMasterMachineId(selfId)
+                .onErrorReturn(false)
+                .flatMap(isMasterNow -> {
+                    if (!Boolean.TRUE.equals(isMasterNow)) {
+                        // Non-master does not scale.
+                        return Mono.empty();
+                    }
+
+                    if (newCount <= props.minBacklogToScale()) {
+                        return Mono.empty();
+                    }
+                    return machines.listManaged()
+                            .filter(m -> "started".equals(m.state()))
+                            .count()
+                            .flatMap(current -> {
+                                long target = Math.min(props.maxMachines(), current + props.scaleStep());
+                                long need = Math.max(0L, target - current);
+
+                                if (need == 0) {
+                                    return Mono.empty();
+                                }
+
+                                log.warn("autoscale: backlog={} > minBacklog={} -> scale {} -> {} (need={})",
+                                        newCount, props.minBacklogToScale(), current, target, need);
+
+                                return machines.listManaged()
+                                        .filter(m -> "stopped".equals(m.state()) || "suspended".equals(m.state()))
+                                        .take(need)
+                                        // English comment: Start sequentially to avoid Machines API rate limits
+                                        .concatMap(m -> machines.start(m.id())
+                                                .delayElement(Duration.ofMillis(250)))
+                                        .then();
+                            })
+                            // English comment: Update lastScale only if we actually executed the start pipeline
+                            .doOnSuccess(v -> lastScaleEpochMillis.set(System.currentTimeMillis()));
+
+                });
     }
 }
