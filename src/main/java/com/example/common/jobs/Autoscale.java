@@ -42,8 +42,9 @@ public abstract class Autoscale {
     public abstract Mono<Long> hasJob();
 
     public void tick() {
+        final String selfId = System.getenv("FLY_MACHINE_ID");
         if (!running.compareAndSet(false, true)) {
-            log.info("autoscale: previous run still active, skipping tick");
+            log.info("{} autoscale: previous run still active, skipping tick", selfId);
             return;
         }
 
@@ -53,8 +54,6 @@ public abstract class Autoscale {
                 running.set(false);
                 return;
             }
-
-            final String selfId = System.getenv("FLY_MACHINE_ID");
             if (selfId == null || selfId.isBlank()) {
                 log.warn("autoscale: FLY_MACHINE_ID is not set, skipping tick");
                 running.set(false);
