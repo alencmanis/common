@@ -149,7 +149,7 @@ public abstract class Autoscale {
                                         .filter(m -> "stopped".equals(m.state()) || "suspended".equals(m.state()))
                                         .take(need)
                                         // English comment: Start sequentially to avoid Machines API rate limits
-                                        .concatMap(m -> machines.start(m.id())
+                                        .concatMap(m -> machines.start("stopped", "suspended")
                                                 .delayElement(Duration.ofMillis(250)))
                                         .then();
                             })
