@@ -6,5 +6,4 @@ public interface AutoscaleProps {
     int scaleStep();
     int maxMachines();
     long cooldownSeconds();
-    long minBacklogToScale();
 }
