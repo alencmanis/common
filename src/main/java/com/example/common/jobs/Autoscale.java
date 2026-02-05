@@ -29,7 +29,7 @@ public abstract class Autoscale {
 
     // English comment: Track how long backlog stayed at 0 to decide when to suspend non-master machines.
     private final AtomicLong lastZeroBacklogAt = new AtomicLong(0L);
-    private final Duration suspendDelay = Duration.ofSeconds(30);
+    private final Duration suspendDelay = Duration.ofSeconds(300);
 
     public Autoscale(MachinesManagerService machines,
                      AutoscaleProps props,
@@ -115,36 +115,31 @@ public abstract class Autoscale {
                                     if (newCount <= props.minBacklogToScale()) {
                                         return Mono.empty();
                                     }
-
-//                                    long now = System.currentTimeMillis();
-//                                    long last = lastScaleEpochMillis.get();
-//                                    long cooldownMs = Duration.ofSeconds(props.cooldownSeconds()).toMillis();
-//                                    long elapsed = now - last;
-
-//                                    if (elapsed < cooldownMs) {
-//                                        log.warn("autoscale: backlog={} > minBacklog, but cooldown active ({}ms left)",
-//                                                newCount, (cooldownMs - elapsed));
-//                                        return Mono.empty();
-//                                    }
-
                                     return machines.listManaged()
                                             .filter(m -> "started".equals(m.state()))
                                             .count()
                                             .flatMap(current -> {
                                                 long target = Math.min(props.maxMachines(), current + props.scaleStep());
-
-                                                log.warn("autoscale: backlog={} > minBacklog={} -> scale {} -> {}",
-                                                        newCount, props.minBacklogToScale(), current, target);
-
                                                 long need = Math.max(0L, target - current);
+
                                                 if (need == 0) {
                                                     return Mono.empty();
                                                 }
 
-                                                // Better long-term: startSome((int) need, "stopped", "suspended")
-                                                return machines.start("stopped", "suspended");
+                                                log.warn("autoscale: backlog={} > minBacklog={} -> scale {} -> {} (need={})",
+                                                        newCount, props.minBacklogToScale(), current, target, need);
+
+                                                return machines.listManaged()
+                                                        .filter(m -> "stopped".equals(m.state()) || "suspended".equals(m.state()))
+                                                        .take(need)
+                                                        // English comment: Start sequentially to avoid Machines API rate limits
+                                                        .concatMap(m -> machines.start(m.id())
+                                                                .delayElement(Duration.ofMillis(250)))
+                                                        .then();
                                             })
+                                            // English comment: Update lastScale only if we actually executed the start pipeline
                                             .doOnSuccess(v -> lastScaleEpochMillis.set(System.currentTimeMillis()));
+
                                 });
                     })
                     .onErrorResume(e -> {
