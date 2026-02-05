@@ -7,4 +7,5 @@ public interface AutoscaleProps {
     int maxMachines();
     long cooldownSeconds();
     long minBacklogToScale();
+    boolean suspendEnabled();
 }

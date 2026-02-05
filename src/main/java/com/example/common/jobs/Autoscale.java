@@ -64,7 +64,7 @@ public abstract class Autoscale {
                     .flatMap(newCount -> {
 
                         // ---- 1) Suspend logic: ONLY for non-master AND only when backlog == 0 ----
-                        if (newCount == 0) {
+                        if (newCount == 0 && props.suspendEnabled()) {
                             long now = System.currentTimeMillis();
                             lastZeroBacklogAt.compareAndSet(0L, now);
 
