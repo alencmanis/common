@@ -1,6 +1,5 @@
 package com.example.common.fly;
 
-
 import com.example.common.fly.dto.CreateMachineRequest;
 import com.example.common.fly.dto.Machine;
 import org.springframework.http.HttpStatusCode;
