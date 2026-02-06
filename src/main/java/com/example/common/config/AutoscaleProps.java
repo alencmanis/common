@@ -8,4 +8,5 @@ public interface AutoscaleProps {
     long cooldownSeconds();
     long minBacklogToScale();
     boolean suspendEnabled();
+    boolean startupEnabled();
 }

@@ -93,17 +93,19 @@ public abstract class Autoscale {
                                         return machines.suspendMachine(selfId)
                                                 .onErrorResume(e -> {
                                                     // If suspend failed, allow retry on future ticks.
-                                                    lastZeroBacklogAt.compareAndSet(0L, System.currentTimeMillis());
+                                                    lastZeroBacklogAt.set(System.currentTimeMillis());
                                                     return Mono.error(e);
                                                 });
                                     });
                         } else {
                             // Backlog is not zero => reset the timer.
                             lastZeroBacklogAt.set(0L);
+                            if (props.startupEnabled()) {
+                                return start(selfId, newCount);
+                            } else {
+                                return Mono.empty();
+                            }
                         }
-
-                        // ---- 2) Scale-up logic: ONLY master may scale ----
-                        return start(selfId, newCount);
                     })
                     .onErrorResume(e -> {
                         log.error("autoscale: job failed {}", e.getMessage(), e);
