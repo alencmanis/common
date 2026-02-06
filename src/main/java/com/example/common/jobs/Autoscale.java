@@ -50,7 +50,6 @@ public abstract class Autoscale {
 
         try {
             if (!props.enabled()) {
-                log.info("autoscale: is disabled, skipping tick");
                 running.set(false);
                 return;
             }
