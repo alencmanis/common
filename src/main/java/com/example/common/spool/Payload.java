@@ -751,12 +751,20 @@ public final class Payload {
     // ----------------------------- Common output -----------------------------
 
     public static final class DecodedMeta {
-        public final Map<String, Object> meta;
-        public final int metaBytes;
+        private final Map<String, Object> meta;
+        private final int metaBytes;
 
         public DecodedMeta(Map<String, Object> meta, int metaBytes) {
             this.meta = Objects.requireNonNull(meta, "meta");
             this.metaBytes = metaBytes;
+        }
+
+        public Map<String, Object> getMeta() {
+            return meta;
+        }
+
+        public int getMetaBytes() {
+            return metaBytes;
         }
     }
 }
