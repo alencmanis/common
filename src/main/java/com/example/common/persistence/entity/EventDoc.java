@@ -2,6 +2,7 @@ package com.example.common.persistence.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -25,6 +26,7 @@ public record EventDoc(
         String hash,
         Boolean duplicate,
         byte[] payload,
-        String temp
+        @Indexed(name = "ttl_expireAt", expireAfter = "PT0S")
+        Instant expireAt
 ) {
 }
