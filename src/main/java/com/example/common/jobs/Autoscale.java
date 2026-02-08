@@ -80,13 +80,13 @@ public abstract class Autoscale {
                                         long elapsed = now - zeroSince;
 
                                         if (elapsed < suspendDelay.toMillis()) {
-                                            log.info("autoscale: backlog=0 and not master, waiting {}ms before suspend",
-                                                    (suspendDelay.toMillis() - elapsed));
+                                            log.info("{} autoscale: backlog=0 and not master, waiting {}ms before suspend",
+                                                    System.getenv("FLY_MACHINE_ID"), (suspendDelay.toMillis() - elapsed));
                                             return Mono.empty();
                                         }
 
-                                        log.warn("autoscale: backlog=0 for {}ms and not master -> suspending self ({})",
-                                                elapsed, selfId);
+                                        log.warn("{} autoscale: backlog=0 for {}ms and not master -> suspending self ({})",
+                                                System.getenv("FLY_MACHINE_ID"), elapsed, selfId);
 
                                         lastZeroBacklogAt.set(0L);
                                         return machines.suspendMachine(selfId)
@@ -142,8 +142,8 @@ public abstract class Autoscale {
                                     return Mono.empty();
                                 }
 
-                                log.warn("autoscale: backlog={} > minBacklog={} -> scale {} -> {} (need={})",
-                                        newCount, props.minBacklogToScale(), current, target, need);
+                                log.warn("{} autoscale: backlog={} > minBacklog={} -> scale {} -> {} (need={})",
+                                        System.getenv("FLY_MACHINE_ID"), newCount, props.minBacklogToScale(), current, target, need);
 
                                 return machines.listManaged()
                                         .filter(m -> "stopped".equals(m.state()) || "suspended".equals(m.state()))
