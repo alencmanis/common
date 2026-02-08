@@ -59,6 +59,8 @@ public abstract class Autoscale {
                 return;
             }
 
+
+
             hasJob()
                     .flatMap(newCount -> {
 
